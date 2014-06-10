@@ -11,8 +11,9 @@
 			background:#cdcdcd;
 		}
 	</style>
-		
+	
 	<script type="application/javascript" src="xgui.min.js"></script>
+	<script type="application/javascript" src="RequestAnimationFrame.js"></script>	
 
  </HEAD>
 
@@ -49,7 +50,7 @@
 		var c2 = new gui.CheckBox( {x: 10, y: 140, text: "Checkbox C", width: 16, height: 16 } );
 
 		// Knob
-		var k0 = new gui.Knob( {x: 10, y: 170, radius: 30, value: -80, min: -200, max: 200 } );
+		var k0 = new gui.Knob( {x: 10, y: 170, radius: 30, value: 80, min: -200, max: 200 } );
 		var k1 = new gui.Knob( {x: 85, y: 180, radius: 20, value: 0.75, min: 0, max: 1, decimals: 2 } );
 		var k2 = new gui.Knob( {x: 140, y: 180, radius: 20, value: 0.35, min: 0, max: 1, decimals: 2 } );
 
@@ -69,8 +70,33 @@
 		var b1 = new gui.Button( {x: 460, y: 60, text: "Another Button", height: 30 } );
 
 		// ColorPicker2
-		var cp1 = new gui.ColorPicker2( {x: 210, y: 180, width: 170, height: 50, framewidth:20, frameheight:20 } );
-		var cp2 = new gui.ColorPicker2( {x: 210, y: 210, width: 170, height: 50, framewidth:20, frameheight:20 } );
+		var cp1 = new gui.ColorPicker2( {x: 210, y: 160, width: 170, height: 50, framewidth:20, frameheight:20 } );
+		var cp2 = new gui.ColorPicker2( {x: 210, y: 190, width: 170, height: 50, framewidth:20, frameheight:20 } );
+
+		// ColorPicker3
+		// We need to feed it a palette-array in the form of: [ffffff, 000000, ff0000, etc...]
+		// and the color picker will just output them left to rigth, top to bottom, and "linebreak" at the 'maxWidth'
+		var palette = [];
+        var m = 25;
+        for (var h = 0; h < 6; h++) {
+	        for (var box = 0; box < 3; box++) {
+	        	for (var c = 0; c < 6; c++) {
+	        		
+	        		if (box == 0) {
+	        			palette.push( colorToHex("rgb("+(c+1*h)*m+","+0+","+0+")") );
+	        		}
+	        		if (box == 1) {
+	        			palette.push( colorToHex("rgb("+0+","+(c+1*h)*m+","+0+")") );
+	        		}
+	        		if (box == 2) {
+	        			palette.push( colorToHex("rgb("+0+","+0+","+(c+1*h)*m+")") );
+	        		}
+
+	        	}
+	        }
+        }
+
+		var cp3 = new gui.ColorPicker3( {x: 210, y: 220, framewidth:20, frameheight:20, palette: palette, maxWidth: 18, size: 16 } );
 
 		// Graph
 		var g0 = new gui.Graph( {x: 315, y: 140, max: 100, min: -100, width: 130 } );
@@ -100,11 +126,12 @@
 		var joy1 = new gui.Joystick( {x:345, y:250} );		
 
 		// CircularSlider
-		var cs0 = new gui.CircularSlider( {x:470, y:285, value: 40} );		
+		var cs0 = new gui.CircularSlider( {x:460, y:285, value: 40} );		
+		var cs1 = new gui.CircularSlider( {x:520, y:285, value: 0.6, max: 1.0, min: -1.0, decimals: 2} );		
 
 		// Scrollwheel
-		var sw0 = new gui.Scrollwheel( {x:305, y:260} );	
-		
+		var sw0 = new gui.Scrollwheel( {x:305, y:260} );		
+
 
 		// Set up some stuff to test with
 		var testObj0 = {x: 20, y: 80};
@@ -138,9 +165,11 @@
 
 
 		// Run a dummy update
-		setInterval(tempUpdate, 1000/60);
+		tempUpdate();
 
 		function tempUpdate() {
+
+			requestAnimationFrame( tempUpdate );
 
 			testObj1.a = Math.sin(test+=0.03)*75; // sin wave for the Graph
 			testObj1.b = "Label with value: " + Math.round(testObj1.a); // number for the Label
@@ -152,7 +181,7 @@
 			//console.log(testObj0.x, testObj0.y);
 
 		}
-	
+
 	</script>
 
 	Testbed touch for <a href="https://github.com/oosmoxiecode/xgui.js">xgui.js</a>.
